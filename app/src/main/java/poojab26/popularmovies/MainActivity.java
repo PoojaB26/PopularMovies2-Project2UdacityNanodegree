@@ -32,6 +32,8 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar sortProgress;
     int SpinnerPosition;
     RecyclerView.LayoutManager layoutManager;
+    Spinner spinner;
+    private final String Sort_Spinner_Key = "sort_spinner";
 
 
     @Override
@@ -45,7 +47,16 @@ public class MainActivity extends AppCompatActivity {
         int numberOfColumns = 2;
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
+        if(savedInstanceState!=null){
+            SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
+        }
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(Sort_Spinner_Key, SpinnerPosition);
     }
 
     @Override
@@ -54,19 +65,19 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.home_menu, menu);
 
         MenuItem item = menu.findItem(R.id.spinner);
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
+        spinner = (Spinner) MenuItemCompat.getActionView(item);
 
         ArrayAdapter<CharSequence> menuArrayAadapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
         menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
         spinner.setAdapter(menuArrayAadapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                SpinnerPosition = parent.getSelectedItemPosition();
+                if(SpinnerPosition<=0)
+                     SpinnerPosition = parent.getSelectedItemPosition();
 
                 if(SpinnerPosition==0) {
                     sortProgress.setVisibility(View.VISIBLE);
@@ -78,6 +89,11 @@ public class MainActivity extends AppCompatActivity {
                     loadTopRatedMoviesList();
                 }
 
+                else if(SpinnerPosition==2){
+                    sortProgress.setVisibility(View.VISIBLE);
+                    loadFavouriteMovies();
+                }
+
             } // to close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)
             {
@@ -87,6 +103,10 @@ public class MainActivity extends AppCompatActivity {
 
         return true;
     }
+
+    private void loadFavouriteMovies() {
+    }
+
     private void loadPopularMoviesList() {
         apiInterface = APIClient.getClient().create(ApiInterface.class);
 
@@ -96,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
 
                 List<Movie> movies = response.body().getMovies();
-                Log.d("TAG", movies.get(0).getOriginalLanguage());
-               // adapter = new MoviesAdapter(movies, R.layout.movie_recycler_view_item, MainActivity.this);
+              // adapter = new MoviesAdapter(movies, R.layout.movie_recycler_view_item, MainActivity.this);
                 sortProgress.setVisibility(View.GONE);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
