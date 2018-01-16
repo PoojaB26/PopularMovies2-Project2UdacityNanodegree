@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">PopularMovies</string>
+    <string name="no_network">Please check your internet connection</string>
+    <string name="release_date">Release Date : </string>
+
+    <string-array name="sort_array_spinner">
+        <item>Popular</item>
+        <item>Top Rated</item>
+    </string-array>
+</resources>
