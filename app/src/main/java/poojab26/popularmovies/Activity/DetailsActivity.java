@@ -54,14 +54,15 @@ public class DetailsActivity extends AppCompatActivity {
         tvRelease = (TextView)findViewById(R.id.tvRelease);
 
         trailersRecyclerView = (RecyclerView)findViewById(R.id.rvTrailers);
-        reviewsRecyclerView = (RecyclerView)findViewById(R.id.rvReviews);
         trailersLayoutManager = new LinearLayoutManager(this);
-        reviewsLayoutManager = new LinearLayoutManager(this);
         trailersRecyclerView.setLayoutManager(trailersLayoutManager);
+
+        reviewsRecyclerView = (RecyclerView)findViewById(R.id.rvReviews);
+        reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
 
 
-          loadMovieDetails();
+        loadMovieDetails();
     }
 
     private void loadMovieDetails(){
@@ -77,7 +78,6 @@ public class DetailsActivity extends AppCompatActivity {
         tvRelease.setText(getString(R.string.release_date) +movie.getReleaseDate());
         loadTrailers(movie.getId().longValue());
         loadReviews(movie.getId().longValue());
-        Log.d("TAG", movie.getId().toString());
 
     }
 
@@ -123,12 +123,7 @@ public class DetailsActivity extends AppCompatActivity {
                 List<Review> reviews = response.body().getReviews();
                 if(reviews.size()>0)
                     Log.d("TAG", reviews.get(0).getContent());
-                reviewsRecyclerView.setAdapter(new ReviewsAdapter(reviews, new ReviewsAdapter.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-
-                    }
-                }));
+                reviewsRecyclerView.setAdapter(new ReviewsAdapter(reviews));
 
             }
 

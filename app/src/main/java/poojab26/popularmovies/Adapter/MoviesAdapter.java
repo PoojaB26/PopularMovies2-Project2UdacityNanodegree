@@ -2,9 +2,11 @@ package poojab26.popularmovies.Adapter;
 
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -65,12 +67,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvMovieName;
         ImageView imgPoster;
+        Button favButton;
 
         ViewHolder(View itemView) {
             super(itemView);
 
             tvMovieName = (TextView) itemView.findViewById(R.id.tv_moviename);
             imgPoster = (ImageView) itemView.findViewById(R.id.imgPoster);
+            favButton = (Button) itemView.findViewById(R.id.favouriteButton);
+
 
         }
 
@@ -79,6 +84,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             tvMovieName.setText(title);
             String ImagePath = movies.get(position).getPosterPath();
             Picasso.with(itemView.getContext()).load(BASE_PATH + ImagePath).into(imgPoster);
+            favButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d("TAG", "fav button "+movies.get(position).getTitle());
+                }
+            });
 
 
             itemView.setOnClickListener(new View.OnClickListener() {
