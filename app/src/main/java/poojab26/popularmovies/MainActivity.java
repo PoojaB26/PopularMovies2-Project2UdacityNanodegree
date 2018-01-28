@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Spinner spinner;
     private final String Sort_Spinner_Key = "sort_spinner";
 
-
+    int flag = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +57,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.d("TAG", "Restore");
-        SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
-        loadClasses(SpinnerPosition);
+        if(savedInstanceState!=null) {
+            SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
+            flag = 1;
+           // loadClasses(SpinnerPosition);
+        }
 
     }
 
@@ -83,14 +86,16 @@ public class MainActivity extends AppCompatActivity {
         ArrayAdapter<CharSequence> menuArrayAadapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
         menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
         spinner.setAdapter(menuArrayAadapter);
 
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                Log.d("TAG", SpinnerPosition+"");
-                    SpinnerPosition = parent.getSelectedItemPosition();
+                Log.d("TAG", SpinnerPosition+"" + parent.getSelectedItemPosition());
+                    if(flag==0)
+                        SpinnerPosition = parent.getSelectedItemPosition();
                     loadClasses(SpinnerPosition);
 
             } // to close the onItemSelected
