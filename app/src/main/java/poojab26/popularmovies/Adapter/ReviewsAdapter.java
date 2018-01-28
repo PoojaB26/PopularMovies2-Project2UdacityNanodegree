@@ -15,17 +15,13 @@ import poojab26.popularmovies.R;
  * Created by poojab26 on 29-Jan-18.
  */
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHolder> {
-    public ReviewsAdapter(List<Review> reviews, OnItemClickListener listener) {
+    public ReviewsAdapter(List<Review> reviews) {
         this.reviews = reviews;
-        this.listener = listener;
     }
 
-    public interface OnItemClickListener{
-        void onItemClick(int position);
-    }
 
     private final List<Review> reviews;
-    private final OnItemClickListener listener;
+ //   private final OnItemClickListener listener;
 
 
     @Override
@@ -36,7 +32,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.bind(position, listener);
+        holder.bind(position);
 
     }
 
@@ -53,15 +49,10 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
             tvReviews = (TextView)itemView.findViewById(R.id.tv_reviews);
         }
 
-        public void bind(final int position, final OnItemClickListener listener){
+        public void bind(final int position){
             String reviewsContent = reviews.get(position).getContent();
             tvReviews.setText(reviewsContent);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
 
-                }
-            });
         }
     }
 }
