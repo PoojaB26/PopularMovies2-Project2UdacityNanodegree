@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
                 List<Movie> movies = response.body().getMovies();
                 // adapter = new MoviesAdapter(movies, R.layout.movie_recycler_view_item, MainActivity.this);
                 sortProgress.setVisibility(View.GONE);
-                recyclerView.setAdapter(adapter);
+              //  recyclerView.setAdapter(adapter);
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
                     @Override public void onItemClick(int position) {
                     }

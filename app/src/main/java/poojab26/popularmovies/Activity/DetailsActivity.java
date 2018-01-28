@@ -3,8 +3,11 @@ package poojab26.popularmovies.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -12,6 +15,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import poojab26.popularmovies.Adapter.TrailersAdapter;
 import poojab26.popularmovies.ApiInterface;
 import poojab26.popularmovies.BuildConfig;
 import poojab26.popularmovies.Model.Movie;
@@ -31,6 +35,9 @@ public class DetailsActivity extends AppCompatActivity {
     ApiInterface apiInterface;
     String BASE_PATH = "http://image.tmdb.org/t/p/w342/";
     String Title, Synopsis, Rating, Release, URL;
+    RecyclerView trailersRecyclerView;
+    TrailersAdapter trailersAdapter;
+    RecyclerView.LayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +50,17 @@ public class DetailsActivity extends AppCompatActivity {
         tvRating = (TextView)findViewById(R.id.tvRating);
         tvRelease = (TextView)findViewById(R.id.tvRelease);
 
-        loadMovieDetails();
+        trailersRecyclerView = (RecyclerView)findViewById(R.id.rvTrailers);
+        layoutManager = new LinearLayoutManager(this);
+        trailersRecyclerView.setLayoutManager(layoutManager);
+
+       /* ArrayAdapter<CharSequence> trailersArrayAadapter = ArrayAdapter.createFromResource
+                (this, R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
+   //     menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+ */   //    trailersRecyclerView.setAdapter(trailersAdapter);
+          loadMovieDetails();
+        //  loadTrailers();
     }
 
     private void loadMovieDetails(){
@@ -75,6 +92,12 @@ public class DetailsActivity extends AppCompatActivity {
                 List<Video> videos = response.body().getVideos();
                 if(videos.size()>0)
                      Log.d("TAG", videos.get(0).getKey());
+                trailersRecyclerView.setAdapter(new TrailersAdapter(videos, new TrailersAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+
+                    }
+                }));
 
             }
 
