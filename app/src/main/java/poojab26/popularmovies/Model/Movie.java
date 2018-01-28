@@ -63,6 +63,7 @@ public class Movie implements Parcelable{
         overview = in.readString();
         releaseDate = in.readString();
         voteAverage = in.readDouble();
+        id = in.readInt();
     }
     public Movie(){}
 
@@ -76,6 +77,7 @@ public class Movie implements Parcelable{
         dest.writeString(overview);
         dest.writeString(releaseDate);
         dest.writeDouble(voteAverage);
+        dest.writeInt(id);
     }
 
     @Override

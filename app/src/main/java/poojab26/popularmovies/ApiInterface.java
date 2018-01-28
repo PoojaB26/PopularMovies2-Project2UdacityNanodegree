@@ -1,8 +1,10 @@
 package poojab26.popularmovies;
 
 import poojab26.popularmovies.Model.MoviesList;
+import poojab26.popularmovies.Model.VideosList;
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -17,5 +19,8 @@ public interface ApiInterface {
 
     @GET("movie/top_rated")
     Call<MoviesList> getTopRatedMovies(@Query("api_key") String apiKey);
+
+    @GET("movie/{id}/videos")
+    Call<VideosList> getMovieVideos(@Path("id") long movieId, @Query("api_key") String apiKey);
 
 }
