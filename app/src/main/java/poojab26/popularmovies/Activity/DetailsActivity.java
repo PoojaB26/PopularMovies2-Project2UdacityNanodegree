@@ -14,7 +14,9 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import poojab26.popularmovies.Adapter.ReviewsAdapter;
 import poojab26.popularmovies.Adapter.TrailersAdapter;
 import poojab26.popularmovies.ApiInterface;
 import poojab26.popularmovies.BuildConfig;
@@ -35,9 +37,10 @@ public class DetailsActivity extends AppCompatActivity {
     ApiInterface apiInterface;
     String BASE_PATH = "http://image.tmdb.org/t/p/w342/";
     String Title, Synopsis, Rating, Release, URL;
-    RecyclerView trailersRecyclerView;
+    RecyclerView trailersRecyclerView, reviewsRecyclerView;
     TrailersAdapter trailersAdapter;
-    RecyclerView.LayoutManager layoutManager;
+    ReviewsAdapter reviewsAdapter;
+    RecyclerView.LayoutManager trailersLayoutManager, reviewsLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,16 +54,14 @@ public class DetailsActivity extends AppCompatActivity {
         tvRelease = (TextView)findViewById(R.id.tvRelease);
 
         trailersRecyclerView = (RecyclerView)findViewById(R.id.rvTrailers);
-        layoutManager = new LinearLayoutManager(this);
-        trailersRecyclerView.setLayoutManager(layoutManager);
+        reviewsRecyclerView = (RecyclerView)findViewById(R.id.rvReviews);
+        trailersLayoutManager = new LinearLayoutManager(this);
+        reviewsLayoutManager = new LinearLayoutManager(this);
+        trailersRecyclerView.setLayoutManager(trailersLayoutManager);
+        reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
 
-       /* ArrayAdapter<CharSequence> trailersArrayAadapter = ArrayAdapter.createFromResource
-                (this, R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
-   //     menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
- */   //    trailersRecyclerView.setAdapter(trailersAdapter);
           loadMovieDetails();
-        //  loadTrailers();
     }
 
     private void loadMovieDetails(){
@@ -122,6 +123,12 @@ public class DetailsActivity extends AppCompatActivity {
                 List<Review> reviews = response.body().getReviews();
                 if(reviews.size()>0)
                     Log.d("TAG", reviews.get(0).getContent());
+                reviewsRecyclerView.setAdapter(new ReviewsAdapter(reviews, new ReviewsAdapter.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(int position) {
+
+                    }
+                }));
 
             }
 
