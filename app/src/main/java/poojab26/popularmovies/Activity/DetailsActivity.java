@@ -12,12 +12,12 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import poojab26.popularmovies.Adapter.MoviesAdapter;
 import poojab26.popularmovies.ApiInterface;
 import poojab26.popularmovies.BuildConfig;
 import poojab26.popularmovies.Model.Movie;
-import poojab26.popularmovies.Model.MoviesList;
-import poojab26.popularmovies.Model.Result;
+import poojab26.popularmovies.Model.Review;
+import poojab26.popularmovies.Model.ReviewsList;
+import poojab26.popularmovies.Model.Video;
 import poojab26.popularmovies.Model.VideosList;
 import poojab26.popularmovies.R;
 import poojab26.popularmovies.Utilities.APIClient;
@@ -58,6 +58,7 @@ public class DetailsActivity extends AppCompatActivity {
         tvRating.setText(String.valueOf(movie.getVoteAverage()));
         tvRelease.setText(getString(R.string.release_date) +movie.getReleaseDate());
         loadTrailers(movie.getId().longValue());
+        loadReviews(movie.getId().longValue());
         Log.d("TAG", movie.getId().toString());
 
     }
@@ -71,13 +72,38 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<VideosList> call, Response<VideosList> response) {
 
-                List<Result> videos = response.body().getResults();
-                Log.d("TAG", videos.get(0).getKey());
+                List<Video> videos = response.body().getVideos();
+                if(videos.size()>0)
+                     Log.d("TAG", videos.get(0).getKey());
 
             }
 
             @Override
             public void onFailure(Call<VideosList> call, Throwable t) {
+                Log.d("Error", t.getMessage());
+                //setContentView(R.layout.layout_no_network);
+
+
+            }
+        });
+    }
+    private void loadReviews(long id) {
+
+        apiInterface = APIClient.getClient().create(ApiInterface.class);
+
+        Call<ReviewsList> call = apiInterface.getMovieReviews(id, BuildConfig.API_KEY);
+        call.enqueue(new Callback<ReviewsList>() {
+            @Override
+            public void onResponse(Call<ReviewsList> call, Response<ReviewsList> response) {
+
+                List<Review> reviews = response.body().getReviews();
+                if(reviews.size()>0)
+                    Log.d("TAG", reviews.get(0).getContent());
+
+            }
+
+            @Override
+            public void onFailure(Call<ReviewsList> call, Throwable t) {
                 Log.d("Error", t.getMessage());
                 //setContentView(R.layout.layout_no_network);
 
