@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     ApiInterface apiInterface;
     RecyclerView recyclerView;
     ProgressBar sortProgress;
-    int SpinnerPosition;
+    int SpinnerPosition=99;
     RecyclerView.LayoutManager layoutManager;
     Spinner spinner;
     private final String Sort_Spinner_Key = "sort_spinner";
@@ -39,28 +39,41 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("TAG", "OnCreate");
+
         setContentView(R.layout.activity_main);
         sortProgress = (ProgressBar)findViewById(R.id.sortProgress);
 
 
-         recyclerView = (RecyclerView) findViewById(R.id.rvMovies);
+        recyclerView = (RecyclerView) findViewById(R.id.rvMovies);
         int numberOfColumns = 2;
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
-        if(savedInstanceState!=null){
-            SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
-        }
+
+
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        Log.d("TAG", "Restore");
+        SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
+        loadClasses(SpinnerPosition);
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        Log.d("TAG", "Save");
+
         super.onSaveInstanceState(outState);
         outState.putInt(Sort_Spinner_Key, SpinnerPosition);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
+        Log.d("TAG", "Menu");
 
         getMenuInflater().inflate(R.menu.home_menu, menu);
 
@@ -76,23 +89,9 @@ public class MainActivity extends AppCompatActivity {
         {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
             {
-                if(SpinnerPosition<=0)
-                     SpinnerPosition = parent.getSelectedItemPosition();
-
-                if(SpinnerPosition==0) {
-                    sortProgress.setVisibility(View.VISIBLE);
-                    loadPopularMoviesList();
-                }
-
-                else if (SpinnerPosition==1) {
-                    sortProgress.setVisibility(View.VISIBLE);
-                    loadTopRatedMoviesList();
-                }
-
-                else if(SpinnerPosition==2){
-                    sortProgress.setVisibility(View.VISIBLE);
-                    loadFavouriteMovies();
-                }
+                Log.d("TAG", SpinnerPosition+"");
+                    SpinnerPosition = parent.getSelectedItemPosition();
+                    loadClasses(SpinnerPosition);
 
             } // to close the onItemSelected
             public void onNothingSelected(AdapterView<?> parent)
@@ -104,6 +103,26 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
+    private void loadClasses(int SpinnerPosition){
+        Log.d("TAG", "loadClasses");
+
+
+        if(SpinnerPosition==0) {
+            sortProgress.setVisibility(View.VISIBLE);
+            loadPopularMoviesList();
+        }
+
+        else if (SpinnerPosition==1) {
+            sortProgress.setVisibility(View.VISIBLE);
+            loadTopRatedMoviesList();
+        }
+
+        else if(SpinnerPosition==2){
+            sortProgress.setVisibility(View.VISIBLE);
+            loadFavouriteMovies();
+        }
+
+    }
     private void loadFavouriteMovies() {
     }
 
@@ -116,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
 
                 List<Movie> movies = response.body().getMovies();
-              // adapter = new MoviesAdapter(movies, R.layout.movie_recycler_view_item, MainActivity.this);
+                // adapter = new MoviesAdapter(movies, R.layout.movie_recycler_view_item, MainActivity.this);
                 sortProgress.setVisibility(View.GONE);
                 recyclerView.setAdapter(adapter);
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
