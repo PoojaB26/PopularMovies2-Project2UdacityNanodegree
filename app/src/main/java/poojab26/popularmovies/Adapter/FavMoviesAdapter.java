@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import poojab26.popularmovies.Data.MoviesContract;
 import poojab26.popularmovies.R;
 
@@ -20,6 +22,8 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
 
     private Cursor mCursor;
     private Context mContext;
+    String BASE_PATH = "http://image.tmdb.org/t/p/w185/";
+
 
     public FavMoviesAdapter(Context mContext) {
         this.mContext = mContext;
@@ -39,6 +43,7 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
         int idIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry._ID);
         int movieIdIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_ID);
         int titleIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_TITLE);
+        int posterIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_POSTERPATH);
 
         mCursor.moveToPosition(position);
         holder.favButton.setBackgroundResource(R.drawable.favourite_true);
@@ -46,6 +51,8 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
         final int id = mCursor.getInt(idIndex);
         int movieId = mCursor.getInt(movieIdIndex);
         String movieTitle = mCursor.getString(titleIndex);
+        String moviePath = mCursor.getString(posterIndex);
+        Picasso.with(mContext).load(BASE_PATH + moviePath).into(holder.imgPoster);
 
         holder.itemView.setTag(id);
         holder.tvMovieName.setText(movieTitle);
