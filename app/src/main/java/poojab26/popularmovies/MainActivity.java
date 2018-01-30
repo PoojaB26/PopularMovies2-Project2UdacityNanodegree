@@ -1,5 +1,7 @@
 package poojab26.popularmovies;
 
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +19,7 @@ import android.widget.Spinner;
 import java.util.List;
 
 import poojab26.popularmovies.Adapter.MoviesAdapter;
+import poojab26.popularmovies.Data.MoviesContract;
 import poojab26.popularmovies.Model.Movie;
 import poojab26.popularmovies.Model.MoviesList;
 import poojab26.popularmovies.Utilities.APIClient;
@@ -130,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private void loadFavouriteMovies() {
     }
-
+    Movie favouriteMovie = new Movie();
     private void loadPopularMoviesList() {
         apiInterface = APIClient.getClient().create(ApiInterface.class);
 
@@ -145,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
               //  recyclerView.setAdapter(adapter);
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
                     @Override public void onItemClick(int position) {
+
                     }
                 }));
             }
@@ -158,6 +162,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+   /*  public void OnFavButtonClicked(View view){
+         ContentValues contentValues = new ContentValues();
+         contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movies.get(position).getId());
+         contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movies.get(position).getTitle());
+
+         Uri uri = getContentResolver().insert(MoviesContract.MoviesEntry.CONTENT_URI, contentValues);
+
+     }*/
 
     private void loadTopRatedMoviesList() {
 
@@ -168,12 +180,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
 
-                List<Movie> movies = response.body().getMovies();
+                final List<Movie> movies = response.body().getMovies();
                 Log.d("TAG", movies.get(0).getOriginalLanguage());
                 sortProgress.setVisibility(View.GONE);
 
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
                     @Override public void onItemClick(int position) {
+
                     }
                 }));
             }

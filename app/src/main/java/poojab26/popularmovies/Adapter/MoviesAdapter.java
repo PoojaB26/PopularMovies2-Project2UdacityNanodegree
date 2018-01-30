@@ -1,6 +1,8 @@
 package poojab26.popularmovies.Adapter;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,12 +11,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 import poojab26.popularmovies.Activity.DetailsActivity;
+import poojab26.popularmovies.Data.MoviesContract;
 import poojab26.popularmovies.Model.Movie;
 import poojab26.popularmovies.R;
 
@@ -88,6 +92,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     Log.d("TAG", "fav button "+movies.get(position).getTitle());
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movies.get(position).getId());
+                    contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movies.get(position).getTitle());
+
+                    Uri uri = itemView.getContext().getContentResolver().insert(MoviesContract.MoviesEntry.CONTENT_URI, contentValues);
+                    if(uri != null) {
+                        Log.d("TAG", "str" + uri.toString());
+                    }else
+                        Log.d("TAG", "uri null");
                 }
             });
 
