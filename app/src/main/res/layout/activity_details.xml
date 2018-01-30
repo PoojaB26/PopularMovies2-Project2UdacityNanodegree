@@ -10,9 +10,6 @@
         android:orientation="vertical"
         >
 
-
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -31,7 +28,7 @@
             android:layout_margin="8dp"
             android:onClick="onClickFavButton"
             android:background="@drawable/favourite_false"
-            android:gravity="right"></Button>
+            android:gravity="end"/>
         <TextView
             android:id="@+id/tvRating"
             android:layout_width="wrap_content"
@@ -96,7 +93,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="Watch Trailers"
+                android:text="@string/trailers_header"
                 android:padding="10dp"
                 android:textColor="#fff"
                 android:gravity="center_vertical"
@@ -118,7 +115,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Reviews"
+                android:text="@string/reviews_header"
                 android:textColor="@color/colorPrimary"
                 android:textStyle="bold"
                 android:padding="10dp"/>

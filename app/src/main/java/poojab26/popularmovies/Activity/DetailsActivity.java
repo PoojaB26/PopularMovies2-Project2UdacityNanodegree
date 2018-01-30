@@ -48,12 +48,10 @@ public class DetailsActivity extends AppCompatActivity {
     Button favButton;
     ApiInterface apiInterface;
     String BASE_PATH = "http://image.tmdb.org/t/p/w342/";
-    String Title, Synopsis, Rating, Release, URL;
+
     RecyclerView trailersRecyclerView, reviewsRecyclerView;
     LinearLayout trailersLayout;
     MoviesDbHelper moviesDbHelper;
-    TrailersAdapter trailersAdapter;
-    ReviewsAdapter reviewsAdapter;
     RecyclerView.LayoutManager trailersLayoutManager, reviewsLayoutManager;
 
     Movie movie;
@@ -114,8 +112,6 @@ public class DetailsActivity extends AppCompatActivity {
             public void onResponse(Call<VideosList> call, Response<VideosList> response) {
 
                 List<Video> videos = response.body().getVideos();
-               // if(videos.size()>0)
-               //      Log.d("TAG", videos.get(0).getKey());
                 trailersRecyclerView.setAdapter(new TrailersAdapter(videos, new TrailersAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
@@ -128,7 +124,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<VideosList> call, Throwable t) {
                 Log.d("Error", t.getMessage());
-                //setContentView(R.layout.layout_no_network);
+                setContentView(R.layout.layout_no_network);
 
 
             }
@@ -144,8 +140,6 @@ public class DetailsActivity extends AppCompatActivity {
             public void onResponse(Call<ReviewsList> call, Response<ReviewsList> response) {
 
                 List<Review> reviews = response.body().getReviews();
-              //  if(reviews.size()>0)
-               //     Log.d("TAG", reviews.get(0).getContent());
                 reviewsRecyclerView.setAdapter(new ReviewsAdapter(reviews));
 
             }
@@ -153,7 +147,7 @@ public class DetailsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ReviewsList> call, Throwable t) {
                 Log.d("Error", t.getMessage());
-                //setContentView(R.layout.layout_no_network);
+                setContentView(R.layout.layout_no_network);
 
 
             }
@@ -173,7 +167,6 @@ public class DetailsActivity extends AppCompatActivity {
 
             Uri uri = getContentResolver().insert(CONTENT_URI, contentValues);
             if (uri != null) {
-                Log.d("TAG", "str" + uri.toString());
                 favButton.setBackgroundResource(R.drawable.favourite_true);
             } else
                 Log.d("TAG", "uri null");

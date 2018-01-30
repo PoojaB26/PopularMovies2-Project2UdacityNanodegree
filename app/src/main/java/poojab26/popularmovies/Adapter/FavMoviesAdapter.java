@@ -2,7 +2,9 @@ package poojab26.popularmovies.Adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +41,7 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
     }
 
     @Override
-    public void onBindViewHolder(FavMoviesAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(final FavMoviesAdapter.ViewHolder holder, int position) {
         int idIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry._ID);
         int movieIdIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_ID);
         int titleIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_TITLE);
@@ -49,7 +51,7 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
         holder.favButton.setBackgroundResource(R.drawable.favourite_true);
 
         final int id = mCursor.getInt(idIndex);
-        int movieId = mCursor.getInt(movieIdIndex);
+        final int movieId = mCursor.getInt(movieIdIndex);
         String movieTitle = mCursor.getString(titleIndex);
         String moviePath = mCursor.getString(posterIndex);
         Picasso.with(mContext).load(BASE_PATH + moviePath).into(holder.imgPoster);
@@ -61,6 +63,12 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
             public void onClick(View v) {
                 //delete item from content provider
                 //refresh loader
+                Uri uri = MoviesContract.MoviesEntry.CONTENT_URI;
+                uri = uri.buildUpon().appendPath(String.valueOf(movieId)).build();
+                int returnUri = mContext.getContentResolver().delete(uri, null, null);
+                Log.d("TAG", returnUri+"");
+                mContext.getContentResolver().notifyChange(uri, null);
+                holder.favButton.setBackgroundResource(R.drawable.favourite_false);
             }
         });
 
