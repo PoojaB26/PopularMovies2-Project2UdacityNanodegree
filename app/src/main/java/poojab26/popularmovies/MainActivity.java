@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         spinner.setAdapter(menuArrayAadapter);
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
         {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
@@ -162,9 +161,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
 
                 List<Movie> movies = response.body().getMovies();
-                // adapter = new MoviesAdapter(movies, R.layout.movie_recycler_view_item, MainActivity.this);
                 sortProgress.setVisibility(View.GONE);
-              //  recyclerView.setAdapter(adapter);
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
                     @Override public void onItemClick(int position) {
 

@@ -1,8 +1,13 @@
 package poojab26.popularmovies.Adapter;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,14 +24,20 @@ import java.util.List;
 
 import poojab26.popularmovies.Activity.DetailsActivity;
 import poojab26.popularmovies.Data.MoviesContract;
+import poojab26.popularmovies.Data.MoviesDbHelper;
+import poojab26.popularmovies.MainActivity;
 import poojab26.popularmovies.Model.Movie;
 import poojab26.popularmovies.R;
+
+import static poojab26.popularmovies.Data.MoviesContract.MoviesEntry.CONTENT_URI;
 
 /**
  * Created by pblead26 on 04-Oct-17.
  */
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder> {
+
+    MoviesDbHelper moviesDbHelper;
 
     public interface OnItemClickListener {
         void onItemClick(int position);
@@ -40,15 +51,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
 
 
     // data is passed into the constructor
-   public MoviesAdapter(List<Movie> movies, OnItemClickListener listener) {
-       this.movies = movies;
-       this.listener = listener;
+    public MoviesAdapter(List<Movie> movies, OnItemClickListener listener) {
+        this.movies = movies;
+        this.listener = listener;
     }
 
     // inflates the cell layout from xml when needed
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
+        moviesDbHelper= new MoviesDbHelper(parent.getContext());
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.movie_recycler_view_item, parent, false);
         return new ViewHolder(view);
@@ -57,7 +68,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         holder.bind(position, listener);
-      }
+    }
 
 
 
@@ -88,19 +99,33 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             tvMovieName.setText(title);
             String ImagePath = movies.get(position).getPosterPath();
             Picasso.with(itemView.getContext()).load(BASE_PATH + ImagePath).into(imgPoster);
+
+            final Cursor cursor;
+            final SQLiteDatabase db = moviesDbHelper.getReadableDatabase();
+            String sql ="SELECT movie_id FROM "+ MoviesContract.MoviesEntry.TABLE_NAME+" WHERE movie_id="+movies.get(position).getId();
+
+            cursor= db.rawQuery(sql,null);
+            if(cursor.getCount()>=1)
+                favButton.setBackgroundResource(R.drawable.favourite_true);
+
             favButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d("TAG", "fav button "+movies.get(position).getTitle());
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movies.get(position).getId());
-                    contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movies.get(position).getTitle());
 
-                    Uri uri = itemView.getContext().getContentResolver().insert(MoviesContract.MoviesEntry.CONTENT_URI, contentValues);
-                    if(uri != null) {
-                        Log.d("TAG", "str" + uri.toString());
-                    }else
-                        Log.d("TAG", "uri null");
+                    Log.d("TAG", "Cursor Count : " + cursor.getCount());
+                    Log.d("TAG", "fav button " + movies.get(position).getTitle());
+                    if(cursor.getCount()<1) {
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movies.get(position).getId());
+                        contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movies.get(position).getTitle());
+
+                        Uri uri = itemView.getContext().getContentResolver().insert(CONTENT_URI, contentValues);
+                        if (uri != null) {
+                            Log.d("TAG", "str" + uri.toString());
+                            favButton.setBackgroundResource(R.drawable.favourite_true);
+                        } else
+                            Log.d("TAG", "uri null");
+                    }
                 }
             });
 
