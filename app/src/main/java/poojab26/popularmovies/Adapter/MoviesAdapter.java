@@ -111,8 +111,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
             favButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    Log.d("TAG", "Cursor Count : " + cursor.getCount());
                     Log.d("TAG", "fav button " + movies.get(position).getTitle());
                     if(cursor.getCount()<1) {
                         ContentValues contentValues = new ContentValues();

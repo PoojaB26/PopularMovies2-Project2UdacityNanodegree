@@ -41,6 +41,7 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
         int titleIndex = mCursor.getColumnIndex(MoviesContract.MoviesEntry.COLUMN_TITLE);
 
         mCursor.moveToPosition(position);
+        holder.favButton.setBackgroundResource(R.drawable.favourite_true);
 
         final int id = mCursor.getInt(idIndex);
         int movieId = mCursor.getInt(movieIdIndex);
@@ -48,6 +49,13 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
 
         holder.itemView.setTag(id);
         holder.tvMovieName.setText(movieTitle);
+        holder.favButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //delete item from content provider
+                //refresh loader
+            }
+        });
 
     }
 
