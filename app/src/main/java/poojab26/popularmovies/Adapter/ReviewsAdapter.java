@@ -43,15 +43,19 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ViewHold
 
     class ViewHolder extends RecyclerView.ViewHolder{
         TextView tvReviews;
+        TextView tvAuthor;
 
         public ViewHolder(View itemView) {
             super(itemView);
             tvReviews = (TextView)itemView.findViewById(R.id.tv_reviews);
+            tvAuthor = (TextView)itemView.findViewById(R.id.author);
         }
 
         public void bind(final int position){
             String reviewsContent = reviews.get(position).getContent();
+            String reviewsAuthor = reviews.get(position).getAuthor();
             tvReviews.setText(reviewsContent);
+            tvAuthor.setText(reviewsAuthor + " says:");
 
         }
     }
