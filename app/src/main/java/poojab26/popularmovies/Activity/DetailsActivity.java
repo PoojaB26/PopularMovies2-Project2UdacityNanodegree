@@ -1,6 +1,10 @@
 package poojab26.popularmovies.Activity;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -20,6 +25,8 @@ import poojab26.popularmovies.Adapter.ReviewsAdapter;
 import poojab26.popularmovies.Adapter.TrailersAdapter;
 import poojab26.popularmovies.ApiInterface;
 import poojab26.popularmovies.BuildConfig;
+import poojab26.popularmovies.Data.MoviesContract;
+import poojab26.popularmovies.Data.MoviesDbHelper;
 import poojab26.popularmovies.Model.Movie;
 import poojab26.popularmovies.Model.Review;
 import poojab26.popularmovies.Model.ReviewsList;
@@ -31,16 +38,23 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+import static poojab26.popularmovies.Data.MoviesContract.MoviesEntry.CONTENT_URI;
+
 public class DetailsActivity extends AppCompatActivity {
     TextView tvMovieTitle, tvSynopsis, tvRating, tvRelease;
     ImageView tvMovieBackground;
+    Button favButton;
     ApiInterface apiInterface;
     String BASE_PATH = "http://image.tmdb.org/t/p/w342/";
     String Title, Synopsis, Rating, Release, URL;
     RecyclerView trailersRecyclerView, reviewsRecyclerView;
+    MoviesDbHelper moviesDbHelper;
     TrailersAdapter trailersAdapter;
     ReviewsAdapter reviewsAdapter;
     RecyclerView.LayoutManager trailersLayoutManager, reviewsLayoutManager;
+
+    Movie movie;
+    Intent in;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +66,8 @@ public class DetailsActivity extends AppCompatActivity {
         tvSynopsis = (TextView)findViewById(R.id.tvSynopsis);
         tvRating = (TextView)findViewById(R.id.tvRating);
         tvRelease = (TextView)findViewById(R.id.tvRelease);
+        favButton = (Button)findViewById(R.id.favouriteButton);
+        moviesDbHelper = new MoviesDbHelper(this);
 
         trailersRecyclerView = (RecyclerView)findViewById(R.id.rvTrailers);
         trailersLayoutManager = new LinearLayoutManager(this);
@@ -60,14 +76,17 @@ public class DetailsActivity extends AppCompatActivity {
         reviewsRecyclerView = (RecyclerView)findViewById(R.id.rvReviews);
         reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
-
+        in = this.getIntent();
+        movie = in.getParcelableExtra("Movie");
 
         loadMovieDetails();
+
     }
 
     private void loadMovieDetails(){
-        Intent in = this.getIntent();
-        Movie movie = in.getParcelableExtra("Movie");
+        if(checkCountCursor()>=1){
+            favButton.setBackgroundResource(R.drawable.favourite_true);
+        }
         String path = movie.getBackdropPath();
         Picasso.with(getApplicationContext()).load(BASE_PATH+path).into(tvMovieBackground);
 
@@ -137,4 +156,28 @@ public class DetailsActivity extends AppCompatActivity {
         });
     }
 
+    public void onClickFavButton(View view) {
+
+        if(checkCountCursor()<1){
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movie.getId());
+            contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movie.getTitle());
+
+            Uri uri = getContentResolver().insert(CONTENT_URI, contentValues);
+            if (uri != null) {
+                Log.d("TAG", "str" + uri.toString());
+                favButton.setBackgroundResource(R.drawable.favourite_true);
+            } else
+                Log.d("TAG", "uri null");
+        }
+    }
+
+    public int checkCountCursor(){
+        final Cursor cursor;
+        final SQLiteDatabase db = moviesDbHelper.getReadableDatabase();
+        String sql ="SELECT movie_id FROM "+ MoviesContract.MoviesEntry.TABLE_NAME+" WHERE movie_id="+movie.getId();
+
+        cursor= db.rawQuery(sql,null);
+        return cursor.getCount();
+    }
 }

@@ -23,7 +23,15 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-
+        <Button
+            android:id="@+id/favouriteButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="right"
+            android:layout_margin="8dp"
+            android:onClick="onClickFavButton"
+            android:background="@drawable/favourite_false"
+            android:gravity="right"></Button>
         <TextView
             android:id="@+id/tvRating"
             android:layout_width="wrap_content"
