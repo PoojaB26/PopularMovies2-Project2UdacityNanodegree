@@ -1,8 +1,12 @@
 package poojab26.popularmovies;
 
 import android.content.ContentValues;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,6 +22,7 @@ import android.widget.Spinner;
 
 import java.util.List;
 
+import poojab26.popularmovies.Adapter.FavMoviesAdapter;
 import poojab26.popularmovies.Adapter.MoviesAdapter;
 import poojab26.popularmovies.Data.MoviesContract;
 import poojab26.popularmovies.Model.Movie;
@@ -27,7 +32,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
 
     MoviesAdapter adapter;
     ApiInterface apiInterface;
@@ -37,6 +42,9 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView.LayoutManager layoutManager;
     Spinner spinner;
     private final String Sort_Spinner_Key = "sort_spinner";
+
+    public static final int MOVIE_LOADER_ID = 0;
+    private FavMoviesAdapter favMoviesAdapter;
 
     int flag = 0;
     @Override
@@ -52,7 +60,17 @@ public class MainActivity extends AppCompatActivity {
         int numberOfColumns = 2;
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
+        favMoviesAdapter = new FavMoviesAdapter(this);
+        getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
 
+
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
 
     }
 
@@ -132,8 +150,9 @@ public class MainActivity extends AppCompatActivity {
 
     }
     private void loadFavouriteMovies() {
+        sortProgress.setVisibility(View.GONE);
+        recyclerView.setAdapter(favMoviesAdapter);
     }
-    Movie favouriteMovie = new Movie();
     private void loadPopularMoviesList() {
         apiInterface = APIClient.getClient().create(ApiInterface.class);
 
@@ -162,14 +181,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-   /*  public void OnFavButtonClicked(View view){
-         ContentValues contentValues = new ContentValues();
-         contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movies.get(position).getId());
-         contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movies.get(position).getTitle());
-
-         Uri uri = getContentResolver().insert(MoviesContract.MoviesEntry.CONTENT_URI, contentValues);
-
-     }*/
 
     private void loadTopRatedMoviesList() {
 
@@ -200,5 +211,69 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+
+        return new AsyncTaskLoader<Cursor>(this) {
+
+            // Initialize a Cursor, this will hold all the task data
+            Cursor mTaskData = null;
+
+            // onStartLoading() is called when a loader first starts loading data
+            @Override
+            protected void onStartLoading() {
+                if (mTaskData != null) {
+                    // Delivers any previously loaded data immediately
+                    deliverResult(mTaskData);
+                } else {
+                    // Force a new load
+                    forceLoad();
+                }
+            }
+
+            // loadInBackground() performs asynchronous loading of data
+            @Override
+            public Cursor loadInBackground() {
+                // Will implement to load data
+
+                // Query and load all task data in the background; sort by priority
+                // [Hint] use a try/catch block to catch any errors in loading data
+
+                try {
+                    return getContentResolver().query(MoviesContract.MoviesEntry.CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            MoviesContract.MoviesEntry._ID);
+
+                } catch (Exception e) {
+                    Log.e("TAG", "Failed to asynchronously load data.");
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            // deliverResult sends the result of the load, a Cursor, to the registered listener
+            public void deliverResult(Cursor data) {
+                mTaskData = data;
+                super.deliverResult(data);
+            }
+        };
+
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        favMoviesAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        favMoviesAdapter.swapCursor(null);
+    }
+
+    /*To load favourite movies in UI*/
+
 
 }
