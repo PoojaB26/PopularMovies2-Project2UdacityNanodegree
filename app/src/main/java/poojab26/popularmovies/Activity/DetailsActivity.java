@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -49,6 +50,7 @@ public class DetailsActivity extends AppCompatActivity {
     String BASE_PATH = "http://image.tmdb.org/t/p/w342/";
     String Title, Synopsis, Rating, Release, URL;
     RecyclerView trailersRecyclerView, reviewsRecyclerView;
+    LinearLayout trailersLayout;
     MoviesDbHelper moviesDbHelper;
     TrailersAdapter trailersAdapter;
     ReviewsAdapter reviewsAdapter;
@@ -70,6 +72,7 @@ public class DetailsActivity extends AppCompatActivity {
         favButton = (Button)findViewById(R.id.favouriteButton);
         moviesDbHelper = new MoviesDbHelper(this);
 
+        trailersLayout = (LinearLayout)findViewById(R.id.layoutTrailers);
         trailersRecyclerView = (RecyclerView)findViewById(R.id.rvTrailers);
         trailersLayoutManager = new LinearLayoutManager(this);
         trailersRecyclerView.setLayoutManager(trailersLayoutManager);
@@ -194,5 +197,12 @@ public class DetailsActivity extends AppCompatActivity {
 
         cursor= db.rawQuery(sql,null);
         return cursor.getCount();
+    }
+
+    public void onClickTrailerLayout(View view) {
+        if(trailersRecyclerView.getVisibility()==View.VISIBLE)
+            trailersRecyclerView.setVisibility(View.GONE);
+        else
+            trailersRecyclerView.setVisibility(View.VISIBLE);
     }
 }

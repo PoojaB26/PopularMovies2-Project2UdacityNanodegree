@@ -98,8 +98,8 @@ public class MoviesProvider extends ContentProvider {
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
         final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
         int match = sUriMatcher.match(uri);
-        // Keep track of the number of deleted tasks
-        int tasksDeleted; // starts as 0
+
+        int tasksDeleted; // starts as 0, Keep track of the number of deleted tasks
 
         switch (match) {
             case MOVIES_WITH_ID:
