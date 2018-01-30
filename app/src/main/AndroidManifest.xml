@@ -18,6 +18,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".Activity.DetailsActivity"></activity>
+
+        <provider
+            android:authorities="poojab26.popularmovies"
+            android:exported="false"
+            android:name=".Data.MoviesProvider"></provider>
     </application>
 
 </manifest>
