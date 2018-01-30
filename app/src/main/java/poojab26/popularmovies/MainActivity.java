@@ -151,6 +151,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void loadFavouriteMovies() {
         sortProgress.setVisibility(View.GONE);
         recyclerView.setAdapter(favMoviesAdapter);
+
     }
     private void loadPopularMoviesList() {
         apiInterface = APIClient.getClient().create(ApiInterface.class);
@@ -270,7 +271,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         favMoviesAdapter.swapCursor(null);
     }
 
-    /*To load favourite movies in UI*/
 
 
 }

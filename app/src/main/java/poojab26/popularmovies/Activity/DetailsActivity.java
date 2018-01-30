@@ -162,6 +162,10 @@ public class DetailsActivity extends AppCompatActivity {
             ContentValues contentValues = new ContentValues();
             contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movie.getId());
             contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movie.getTitle());
+            contentValues.put(MoviesContract.MoviesEntry.COLUMN_POSTERPATH, movie.getPosterPath());
+            contentValues.put(MoviesContract.MoviesEntry.COLUMN_SYNOPSIS, movie.getOverview());
+            contentValues.put(MoviesContract.MoviesEntry.COLUMN_USER_RATING, movie.getVoteAverage());
+            contentValues.put(MoviesContract.MoviesEntry.COLUMN_RELEASE, movie.getReleaseDate());
 
             Uri uri = getContentResolver().insert(CONTENT_URI, contentValues);
             if (uri != null) {

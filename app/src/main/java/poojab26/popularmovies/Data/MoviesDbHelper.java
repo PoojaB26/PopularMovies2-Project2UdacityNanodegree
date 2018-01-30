@@ -20,7 +20,12 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
         final String CREATE_TABLE = "CREATE TABLE "  + MoviesContract.MoviesEntry.TABLE_NAME + " (" +
                 MoviesContract.MoviesEntry._ID + " INTEGER PRIMARY KEY, " +
                 MoviesContract.MoviesEntry.COLUMN_ID + " TEXT NOT NULL, " +
-                MoviesContract.MoviesEntry.COLUMN_TITLE + " TEXT NOT NULL); " ;
+                MoviesContract.MoviesEntry.COLUMN_TITLE + " TEXT NOT NULL," +
+                MoviesContract.MoviesEntry.COLUMN_POSTERPATH + " TEXT NOT NULL," +
+                MoviesContract.MoviesEntry.COLUMN_SYNOPSIS + " TEXT NOT NULL," +
+                MoviesContract.MoviesEntry.COLUMN_USER_RATING + " TEXT NOT NULL," +
+                MoviesContract.MoviesEntry.COLUMN_RELEASE + " TEXT NOT NULL)" +
+                "; " ;
 
         db.execSQL(CREATE_TABLE);
     }

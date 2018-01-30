@@ -112,18 +112,19 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.ViewHolder
                 @Override
                 public void onClick(View v) {
                     Log.d("TAG", "fav button " + movies.get(position).getTitle());
-                    if(cursor.getCount()<1) {
+                   /* if(cursor.getCount()<1) {
                         ContentValues contentValues = new ContentValues();
                         contentValues.put(MoviesContract.MoviesEntry.COLUMN_ID, movies.get(position).getId());
                         contentValues.put(MoviesContract.MoviesEntry.COLUMN_TITLE, movies.get(position).getTitle());
 
                         Uri uri = itemView.getContext().getContentResolver().insert(CONTENT_URI, contentValues);
+                        itemView.getContext().getContentResolver().notifyChange(uri, null);
                         if (uri != null) {
                             Log.d("TAG", "str" + uri.toString());
                             favButton.setBackgroundResource(R.drawable.favourite_true);
                         } else
                             Log.d("TAG", "uri null");
-                    }
+                    }*/
                 }
             });
 
