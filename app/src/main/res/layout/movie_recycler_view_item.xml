@@ -6,6 +6,15 @@
     android:layout_margin="5dp"
     android:layout_height="300dp"
     >
+    <Button
+        android:id="@+id/favouriteButton"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_gravity="right"
+        android:layout_centerVertical="true"
+        android:layout_margin="8dp"
+        android:background="@drawable/favourite_false"
+        android:gravity="right"></Button>
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,15 +38,8 @@
         android:gravity="center"
         />
 
-    <Button
-        android:id="@+id/favouriteButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:gravity="right"></Button>
 </RelativeLayout>
+
 
 
 
