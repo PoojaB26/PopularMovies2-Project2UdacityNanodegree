@@ -39,6 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static poojab26.popularmovies.Data.MoviesContract.MoviesEntry.CONTENT_URI;
+import static poojab26.popularmovies.MainActivity.MOVIE_LOADER_ID;
 
 public class DetailsActivity extends AppCompatActivity {
     TextView tvMovieTitle, tvSynopsis, tvRating, tvRelease;
@@ -110,8 +111,8 @@ public class DetailsActivity extends AppCompatActivity {
             public void onResponse(Call<VideosList> call, Response<VideosList> response) {
 
                 List<Video> videos = response.body().getVideos();
-                if(videos.size()>0)
-                     Log.d("TAG", videos.get(0).getKey());
+               // if(videos.size()>0)
+               //      Log.d("TAG", videos.get(0).getKey());
                 trailersRecyclerView.setAdapter(new TrailersAdapter(videos, new TrailersAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(int position) {
@@ -140,8 +141,8 @@ public class DetailsActivity extends AppCompatActivity {
             public void onResponse(Call<ReviewsList> call, Response<ReviewsList> response) {
 
                 List<Review> reviews = response.body().getReviews();
-                if(reviews.size()>0)
-                    Log.d("TAG", reviews.get(0).getContent());
+              //  if(reviews.size()>0)
+               //     Log.d("TAG", reviews.get(0).getContent());
                 reviewsRecyclerView.setAdapter(new ReviewsAdapter(reviews));
 
             }
@@ -173,6 +174,16 @@ public class DetailsActivity extends AppCompatActivity {
                 favButton.setBackgroundResource(R.drawable.favourite_true);
             } else
                 Log.d("TAG", "uri null");
+        }else{
+            String id = movie.getId().toString();
+            Uri uri = MoviesContract.MoviesEntry.CONTENT_URI;
+            uri = uri.buildUpon().appendPath(id).build();
+            int returnUri = getContentResolver().delete(uri, null, null);
+            Log.d("TAG", returnUri+"");
+            getContentResolver().notifyChange(uri, null);
+            favButton.setBackgroundResource(R.drawable.favourite_false);
+
+            //    getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, DetailsActivity.this);
         }
     }
 

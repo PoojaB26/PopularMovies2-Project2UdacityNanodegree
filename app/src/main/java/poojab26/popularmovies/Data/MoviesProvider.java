@@ -13,6 +13,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import static poojab26.popularmovies.Data.MoviesContract.MoviesEntry.TABLE_NAME;
+
 /**
  * Created by poojab26 on 30-Jan-18.
  */
@@ -47,7 +49,7 @@ public class MoviesProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         switch (match){
             case MOVIES:
-                cursor = db.query(MoviesContract.MoviesEntry.TABLE_NAME,
+                cursor = db.query(TABLE_NAME,
                         projection,
                         selection, selectionArgs,
                         null,
@@ -77,7 +79,7 @@ public class MoviesProvider extends ContentProvider {
 
         switch (match){
             case MOVIES:
-                long id = db.insert(MoviesContract.MoviesEntry.TABLE_NAME, null, values);
+                long id = db.insert(TABLE_NAME, null, values);
                 if(id>0){
                     returnUri = ContentUris.withAppendedId(MoviesContract.MoviesEntry.CONTENT_URI, id);
                 }else {
@@ -94,7 +96,25 @@ public class MoviesProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
-        return 0;
+        final SQLiteDatabase db = moviesDbHelper.getWritableDatabase();
+        int match = sUriMatcher.match(uri);
+        // Keep track of the number of deleted tasks
+        int tasksDeleted; // starts as 0
+
+        switch (match) {
+            case MOVIES_WITH_ID:
+                String id = uri.getPathSegments().get(1);
+                tasksDeleted = db.delete(TABLE_NAME, "movie_id=?", new String[]{id});
+                break;
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+
+        if (tasksDeleted != 0) {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return tasksDeleted;
     }
 
     @Override
