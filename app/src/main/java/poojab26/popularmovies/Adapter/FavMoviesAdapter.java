@@ -145,12 +145,6 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
                     movie.setVoteAverage(movieRating);
 
                     Intent i = new Intent(itemView.getContext(), DetailsActivity.class);
-                   /* Bundle favMoviesBundle = new Bundle();
-                    favMoviesBundle.putString("string2", str2);
-
-                    favMoviesBundle.putInt("int_id_2", 200);
-
-                    i.putExtras(bundle);*/
 
                     i.putExtra("Movie", movie);
                     itemView.getContext().startActivity(i);

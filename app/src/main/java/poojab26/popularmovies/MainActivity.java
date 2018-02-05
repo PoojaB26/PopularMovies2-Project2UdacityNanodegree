@@ -56,7 +56,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("TAG", "OnCreate");
 
         setContentView(R.layout.activity_main);
         sortProgress = (ProgressBar) findViewById(R.id.sortProgress);
@@ -85,14 +84,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfigChanged + flag"+flag);
-    }
-
-    @Override
     protected void onResume() {
-        Log.d("TAG", "OnResume + flag"+flag);
 
         super.onResume();
         layoutManager = new GridLayoutManager(this, numberOfColumns);
@@ -111,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         mSpinner.setAdapter(menuArrayAadapter);
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("TAG", SpinnerPosition + "->" + parent.getSelectedItemPosition());
                 if(savedInstance!=null) {
                     SpinnerPosition = savedInstance.getInt(Sort_Spinner_Key);
                     loadClasses(SpinnerPosition);
@@ -138,15 +129,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.d("TAG", "Restore + flag" + flag);
         if (savedInstanceState != null) {
             savedInstance = savedInstanceState;
-           /* SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
-            Log.d(TAG, "Spinner Pos" + SpinnerPosition);
-            flag = 1;
-            mSpinner.setSelection(SpinnerPosition);
-            Log.d(TAG, "selection " + mSpinner.getSelectedItemPosition());
-            loadClasses(SpinnerPosition);*/
         }else{
             Log.d(TAG, "null instance");
         }
@@ -155,16 +139,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("TAG", "Save + flag"+flag);
-
         super.onSaveInstanceState(outState);
         outState.putInt(Sort_Spinner_Key, SpinnerPosition);
     }
 
 
     private void loadClasses(int SpinnerPosition) {
-        Log.d("TAG", "loadClasses + selection" + SpinnerPosition);
-
         mSpinner.setSelection(SpinnerPosition);
 
         if (SpinnerPosition == 0) {
@@ -183,9 +163,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void loadFavouriteMovies() {
         sortProgress.setVisibility(View.GONE);
         recyclerView.setAdapter(favMoviesAdapter);
-        Log.d("TAG", "loadFav");
-
-
     }
 
     private void loadPopularMoviesList() {
@@ -195,7 +172,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         call.enqueue(new Callback<MoviesList>() {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
-                Log.d("TAG", "loadPopular");
 
                 List<Movie> movies = response.body().getMovies();
                 sortProgress.setVisibility(View.GONE);
@@ -205,7 +181,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     }
                 }));
-                Log.d("TAG", "loadPopular");
 
             }
 
@@ -229,7 +204,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
 
                 final List<Movie> movies = response.body().getMovies();
-                Log.d("TAG", movies.get(0).getOriginalLanguage());
                 sortProgress.setVisibility(View.GONE);
 
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
@@ -238,7 +212,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     }
                 }));
-                Log.d("TAG", "loadTop");
 
             }
 
