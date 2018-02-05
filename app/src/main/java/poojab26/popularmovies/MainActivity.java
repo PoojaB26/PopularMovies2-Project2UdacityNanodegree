@@ -50,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private Spinner mSpinner;
     int flag = 0;
+    int numberOfColumns = 2;
+    String TAG = "TAG";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,30 +68,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
-        ArrayAdapter<CharSequence> menuArrayAadapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
-        menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        mSpinner.setAdapter(menuArrayAadapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                Log.d("TAG", SpinnerPosition+"" + parent.getSelectedItemPosition());
-                if(flag==0)
-                    SpinnerPosition = parent.getSelectedItemPosition();
-                loadClasses(SpinnerPosition);
-
-            } // to close the onItemSelected
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });
 
 
         recyclerView = (RecyclerView) findViewById(R.id.rvMovies);
-        int numberOfColumns = 2;
+
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
         favMoviesAdapter = new FavMoviesAdapter(this);
@@ -100,8 +83,40 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onResume() {
+        Log.d("TAG", "OnResume");
+
         super.onResume();
+        layoutManager = new GridLayoutManager(this, numberOfColumns);
+        recyclerView.setLayoutManager(layoutManager);
+        favMoviesAdapter = new FavMoviesAdapter(this);
+        ArrayAdapter<CharSequence> menuArrayAadapter = ArrayAdapter.createFromResource(this,
+                R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
+        menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+
+        mSpinner.setAdapter(menuArrayAadapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                Log.d("TAG", SpinnerPosition+"->" + parent.getSelectedItemPosition());
+                if(flag==0) {
+                    Log.d("TAG", "flag 0");
+                    SpinnerPosition = parent.getSelectedItemPosition();
+                }
+                loadClasses(SpinnerPosition);
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
+
+
         getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
+
 
     }
 
@@ -111,7 +126,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.d("TAG", "Restore");
         if(savedInstanceState!=null) {
             SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
+            Log.d(TAG, "Spinner Pos"+SpinnerPosition);
             flag = 1;
+            mSpinner.setSelection(SpinnerPosition);
+            Log.d(TAG, "selection "+mSpinner.getSelectedItemPosition());
             loadClasses(SpinnerPosition);
         }
 
@@ -127,8 +145,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
     private void loadClasses(int SpinnerPosition){
-        Log.d("TAG", "loadClasses");
+        Log.d("TAG", "loadClasses + selection"+SpinnerPosition);
 
+        mSpinner.setSelection(SpinnerPosition);
 
         if(SpinnerPosition==0) {
             sortProgress.setVisibility(View.VISIBLE);
@@ -149,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     private void loadFavouriteMovies() {
         sortProgress.setVisibility(View.GONE);
         recyclerView.setAdapter(favMoviesAdapter);
+        Log.d("TAG", "loadFav");
+
 
     }
     private void loadPopularMoviesList() {
@@ -158,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         call.enqueue(new Callback<MoviesList>() {
             @Override
             public void onResponse(Call<MoviesList> call, Response<MoviesList> response) {
+                Log.d("TAG", "loadPopular");
 
                 List<Movie> movies = response.body().getMovies();
                 sortProgress.setVisibility(View.GONE);
@@ -166,6 +188,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     }
                 }));
+                Log.d("TAG", "loadPopular");
+
             }
 
             @Override
@@ -196,6 +220,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     }
                 }));
+                Log.d("TAG", "loadTop");
+
             }
 
             @Override
