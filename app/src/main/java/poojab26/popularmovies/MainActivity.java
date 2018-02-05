@@ -1,6 +1,7 @@
 package poojab26.popularmovies;
 
 import android.content.ContentValues;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,15 +34,18 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>{
+
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+
+
 
     MoviesAdapter adapter;
     ApiInterface apiInterface;
     RecyclerView recyclerView;
     ProgressBar sortProgress;
-    int SpinnerPosition=99;
+    int SpinnerPosition = 99;
     RecyclerView.LayoutManager layoutManager;
-   // Spinner spinner;
+    // Spinner spinner;
     private final String Sort_Spinner_Key = "sort_spinner";
 
     public static final int MOVIE_LOADER_ID = 0;
@@ -52,6 +56,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     int flag = 0;
     int numberOfColumns = 2;
     String TAG = "TAG";
+    Bundle savedInstance = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.d("TAG", "OnCreate");
 
         setContentView(R.layout.activity_main);
-        sortProgress = (ProgressBar)findViewById(R.id.sortProgress);
+        sortProgress = (ProgressBar) findViewById(R.id.sortProgress);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mSpinner = (Spinner) findViewById(R.id.spinner_nav);
 
@@ -67,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-
 
 
         recyclerView = (RecyclerView) findViewById(R.id.rvMovies);
@@ -78,12 +82,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
 
 
+    }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "onConfigChanged + flag"+flag);
     }
 
     @Override
     protected void onResume() {
-        Log.d("TAG", "OnResume");
+        Log.d("TAG", "OnResume + flag"+flag);
 
         super.onResume();
         layoutManager = new GridLayoutManager(this, numberOfColumns);
@@ -94,22 +103,23 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
 
-
         mSpinner.setAdapter(menuArrayAadapter);
-        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                Log.d("TAG", SpinnerPosition+"->" + parent.getSelectedItemPosition());
-                if(flag==0) {
-                    Log.d("TAG", "flag 0");
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("TAG", SpinnerPosition + "->" + parent.getSelectedItemPosition());
+                if(savedInstance!=null) {
+                    SpinnerPosition = savedInstance.getInt(Sort_Spinner_Key);
+                    loadClasses(SpinnerPosition);
+                    savedInstance = null;
+                }else{
                     SpinnerPosition = parent.getSelectedItemPosition();
+                    loadClasses(SpinnerPosition);
                 }
-                loadClasses(SpinnerPosition);
+
 
             } // to close the onItemSelected
-            public void onNothingSelected(AdapterView<?> parent)
-            {
+
+            public void onNothingSelected(AdapterView<?> parent) {
 
             }
         });
@@ -123,48 +133,48 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.d("TAG", "Restore");
-        if(savedInstanceState!=null) {
-            SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
-            Log.d(TAG, "Spinner Pos"+SpinnerPosition);
+        Log.d("TAG", "Restore + flag" + flag);
+        if (savedInstanceState != null) {
+            savedInstance = savedInstanceState;
+           /* SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
+            Log.d(TAG, "Spinner Pos" + SpinnerPosition);
             flag = 1;
             mSpinner.setSelection(SpinnerPosition);
-            Log.d(TAG, "selection "+mSpinner.getSelectedItemPosition());
-            loadClasses(SpinnerPosition);
+            Log.d(TAG, "selection " + mSpinner.getSelectedItemPosition());
+            loadClasses(SpinnerPosition);*/
+        }else{
+            Log.d(TAG, "null instance");
         }
 
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        Log.d("TAG", "Save");
+        Log.d("TAG", "Save + flag"+flag);
 
         super.onSaveInstanceState(outState);
         outState.putInt(Sort_Spinner_Key, SpinnerPosition);
     }
 
 
-    private void loadClasses(int SpinnerPosition){
-        Log.d("TAG", "loadClasses + selection"+SpinnerPosition);
+    private void loadClasses(int SpinnerPosition) {
+        Log.d("TAG", "loadClasses + selection" + SpinnerPosition);
 
         mSpinner.setSelection(SpinnerPosition);
 
-        if(SpinnerPosition==0) {
+        if (SpinnerPosition == 0) {
             sortProgress.setVisibility(View.VISIBLE);
             loadPopularMoviesList();
-        }
-
-        else if (SpinnerPosition==1) {
+        } else if (SpinnerPosition == 1) {
             sortProgress.setVisibility(View.VISIBLE);
             loadTopRatedMoviesList();
-        }
-
-        else if(SpinnerPosition==2){
+        } else if (SpinnerPosition == 2) {
             sortProgress.setVisibility(View.VISIBLE);
             loadFavouriteMovies();
         }
 
     }
+
     private void loadFavouriteMovies() {
         sortProgress.setVisibility(View.GONE);
         recyclerView.setAdapter(favMoviesAdapter);
@@ -172,6 +182,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
     }
+
     private void loadPopularMoviesList() {
         apiInterface = APIClient.getClient().create(ApiInterface.class);
 
@@ -184,7 +195,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 List<Movie> movies = response.body().getMovies();
                 sortProgress.setVisibility(View.GONE);
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
-                    @Override public void onItemClick(int position) {
+                    @Override
+                    public void onItemClick(int position) {
 
                     }
                 }));
@@ -216,7 +228,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 sortProgress.setVisibility(View.GONE);
 
                 recyclerView.setAdapter(new MoviesAdapter(movies, new MoviesAdapter.OnItemClickListener() {
-                    @Override public void onItemClick(int position) {
+                    @Override
+                    public void onItemClick(int position) {
 
                     }
                 }));
@@ -294,7 +307,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     public void onLoaderReset(Loader<Cursor> loader) {
         favMoviesAdapter.swapCursor(null);
     }
-
 
 
 }
