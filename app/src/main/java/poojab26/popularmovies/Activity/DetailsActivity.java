@@ -170,6 +170,8 @@ public class DetailsActivity extends AppCompatActivity {
                 favButton.setBackgroundResource(R.drawable.favourite_true);
             } else
                 Log.d("TAG", "uri null");
+
+//TODO refresh loader
         }else{
             String id = movie.getId().toString();
             Uri uri = MoviesContract.MoviesEntry.CONTENT_URI;
@@ -178,6 +180,7 @@ public class DetailsActivity extends AppCompatActivity {
             Log.d("TAG", returnUri+"");
             getContentResolver().notifyChange(uri, null);
             favButton.setBackgroundResource(R.drawable.favourite_false);
+//TODO refresh loader
 
             //    getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, DetailsActivity.this);
         }

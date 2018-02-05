@@ -11,6 +11,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,12 +41,14 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     ProgressBar sortProgress;
     int SpinnerPosition=99;
     RecyclerView.LayoutManager layoutManager;
-    Spinner spinner;
+   // Spinner spinner;
     private final String Sort_Spinner_Key = "sort_spinner";
 
     public static final int MOVIE_LOADER_ID = 0;
     private FavMoviesAdapter favMoviesAdapter;
+    private Toolbar mToolbar;
 
+    private Spinner mSpinner;
     int flag = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +57,34 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         setContentView(R.layout.activity_main);
         sortProgress = (ProgressBar)findViewById(R.id.sortProgress);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mSpinner = (Spinner) findViewById(R.id.spinner_nav);
+
+        if (mToolbar != null) {
+            setSupportActionBar(mToolbar);
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
+
+        ArrayAdapter<CharSequence> menuArrayAadapter = ArrayAdapter.createFromResource(this,
+                R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
+        menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        mSpinner.setAdapter(menuArrayAadapter);
+        mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+        {
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+            {
+                Log.d("TAG", SpinnerPosition+"" + parent.getSelectedItemPosition());
+                if(flag==0)
+                    SpinnerPosition = parent.getSelectedItemPosition();
+                loadClasses(SpinnerPosition);
+
+            } // to close the onItemSelected
+            public void onNothingSelected(AdapterView<?> parent)
+            {
+
+            }
+        });
 
 
         recyclerView = (RecyclerView) findViewById(R.id.rvMovies);
@@ -81,7 +112,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         if(savedInstanceState!=null) {
             SpinnerPosition = savedInstanceState.getInt(Sort_Spinner_Key);
             flag = 1;
-           // loadClasses(SpinnerPosition);
+            loadClasses(SpinnerPosition);
         }
 
     }
@@ -94,39 +125,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         outState.putInt(Sort_Spinner_Key, SpinnerPosition);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        Log.d("TAG", "Menu");
-
-        getMenuInflater().inflate(R.menu.home_menu, menu);
-
-        MenuItem item = menu.findItem(R.id.spinner);
-        spinner = (Spinner) MenuItemCompat.getActionView(item);
-
-        ArrayAdapter<CharSequence> menuArrayAadapter = ArrayAdapter.createFromResource(this,
-                R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
-        menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        spinner.setAdapter(menuArrayAadapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                Log.d("TAG", SpinnerPosition+"" + parent.getSelectedItemPosition());
-                    if(flag==0)
-                        SpinnerPosition = parent.getSelectedItemPosition();
-                    loadClasses(SpinnerPosition);
-
-            } // to close the onItemSelected
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });
-
-        return true;
-    }
 
     private void loadClasses(int SpinnerPosition){
         Log.d("TAG", "loadClasses");

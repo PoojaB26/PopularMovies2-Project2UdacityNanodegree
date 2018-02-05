@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.function.ToDoubleBiFunction;
+
 import poojab26.popularmovies.Data.MoviesContract;
 import poojab26.popularmovies.R;
 
@@ -69,6 +71,7 @@ public class FavMoviesAdapter extends RecyclerView.Adapter<FavMoviesAdapter.View
                 Log.d("TAG", returnUri+"");
                 mContext.getContentResolver().notifyChange(uri, null);
                 holder.favButton.setBackgroundResource(R.drawable.favourite_false);
+                //TODO refresh loader
             }
         });
 
