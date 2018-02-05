@@ -91,7 +91,7 @@ public class DetailsActivity extends AppCompatActivity {
         }
         String path = movie.getBackdropPath();
         Picasso.with(getApplicationContext()).load(BASE_PATH+path).into(tvMovieBackground);
-
+        tvMovieBackground.setScaleType(ImageView.ScaleType.FIT_XY);
         tvMovieTitle.setText(movie.getOriginalTitle());
         tvSynopsis.setText(movie.getOverview());
         tvRating.setVisibility(View.VISIBLE);

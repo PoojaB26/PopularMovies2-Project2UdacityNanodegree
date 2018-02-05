@@ -1,21 +1,16 @@
 package poojab26.popularmovies;
 
-import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.Loader;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -78,7 +73,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
-        favMoviesAdapter = new FavMoviesAdapter(this);
+        favMoviesAdapter = new FavMoviesAdapter(this, new FavMoviesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+            }
+        });
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
 
 
@@ -97,7 +97,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onResume();
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
-        favMoviesAdapter = new FavMoviesAdapter(this);
+        favMoviesAdapter = new FavMoviesAdapter(this, new FavMoviesAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(int position) {
+
+            }
+        });
         ArrayAdapter<CharSequence> menuArrayAadapter = ArrayAdapter.createFromResource(this,
                 R.array.sort_array_spinner, android.R.layout.simple_list_item_1);
         menuArrayAadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
