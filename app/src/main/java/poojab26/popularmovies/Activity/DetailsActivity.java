@@ -79,7 +79,9 @@ public class DetailsActivity extends AppCompatActivity {
         reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
         in = this.getIntent();
-        movie = in.getParcelableExtra("Movie");
+
+        if(movie!=null)
+            movie = in.getParcelableExtra("Movie");
 
         loadMovieDetails();
 
