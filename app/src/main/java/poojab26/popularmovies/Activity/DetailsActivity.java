@@ -55,7 +55,7 @@ public class DetailsActivity extends AppCompatActivity {
     RecyclerView.LayoutManager trailersLayoutManager, reviewsLayoutManager;
 
     Movie movie;
-    Intent in;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,10 +78,10 @@ public class DetailsActivity extends AppCompatActivity {
         reviewsRecyclerView = (RecyclerView)findViewById(R.id.rvReviews);
         reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
-        in = this.getIntent();
+        intent = this.getIntent();
 
-        if(movie!=null)
-            movie = in.getParcelableExtra("Movie");
+        if(intent!=null)
+            movie = intent.getParcelableExtra("Movie");
 
         loadMovieDetails();
 
