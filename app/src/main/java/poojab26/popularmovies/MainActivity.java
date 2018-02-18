@@ -100,6 +100,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onPause() {
         super.onPause();
         Log.d(TAG, "onPause");
+        flag=1;
         currentVisiblePosition = ((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
 
         editor.putInt(Spinner_Position_String, SpinnerPosition);
@@ -115,7 +116,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "OnResume & Bundle:" +savedInstance);
+        Log.d(TAG, "OnResume & Bundle:" +savedInstance + " flag" + flag);
 
         super.onResume();
 
