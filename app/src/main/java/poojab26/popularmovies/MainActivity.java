@@ -158,32 +158,32 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 int sPosition = sharedPref.getInt(Spinner_Position_String, 0);
-                Log.d(TAG, sPosition+" position" +savedInstance);
-                //if(savedInstance==null) {
-                    Log.d(TAG, parent.getSelectedItemPosition() + " Select");
+                int pScroll = sharedPref.getInt(Scroll_Position_String, 0);
+                Log.d(TAG, pScroll+" scroll & var->" + currentVisiblePosition+ savedInstance);
+
                     SpinnerPosition = parent.getSelectedItemPosition();
 
-                //}
-
-                if(flag==1) {
+                Log.d(TAG, "flag " + flag);
+                if(flag==1) { //orientation change
                     SpinnerPosition = sPosition;
                     flag = -1;
+                    currentVisiblePosition = pScroll;
+                }else{
+                    currentVisiblePosition = 0;
                 }
 
-              /*  if(sPosition>0)
-                    SpinnerPosition = sPosition;*/
-
                 editor.putInt(Spinner_Position_String, SpinnerPosition);
-                Log.d(TAG, SpinnerPosition + " OnItemSelected");
+                editor.putInt(Scroll_Position_String, currentVisiblePosition);
+
+                Log.d(TAG, currentVisiblePosition + " Scroll OnItemSelected");
                 editor.apply();
 
                /* if(SpinnerPosition==-1)
                     SpinnerPosition = parent.getSelectedItemPosition();*/
 
 
-                loadClasses(SpinnerPosition);
+                loadClasses();
 
-                //Log.d(TAG, "OnResume Item Selected Spinner " + SpinnerPosition);
             } // to close the onItemSelected
 
             public void onNothingSelected(AdapterView<?> parent) {
@@ -193,16 +193,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, this);
-
-        // Log.d(TAG, "OnResume again "+currentVisiblePosition);
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         Log.d(TAG, "OnRestore");
-
-        //Log.d(TAG, "OnRestore" + currentVisiblePosition);
         if (savedInstanceState != null) {
             savedInstance = savedInstanceState;
             flag=1; //orientation changed
@@ -217,19 +213,17 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onSaveInstanceState(outState);
         outState.putInt(Spinner_Position_String, SpinnerPosition);
         outState.putInt(Scroll_Position_String, currentVisiblePosition);
-        Log.d(TAG, "OnSave " + SpinnerPosition + " " + currentVisiblePosition + "Bundle"+ savedInstance);
+        Log.d(TAG, "OnSave flag:" + flag + " " + currentVisiblePosition + " Bundle "+ savedInstance);
 
-       // SharedPreferences.Editor editor = sharedPref.edit();
         editor.putInt(Spinner_Position_String, SpinnerPosition);
         editor.putInt(Scroll_Position_String, currentVisiblePosition);
         editor.commit();
     }
 
 
-    private void loadClasses(int SpinnerPosition) {
+    private void loadClasses() {
         SpinnerPosition = sharedPref.getInt(Spinner_Position_String, 0);
-
-        Log.d(TAG, "load classes" + SpinnerPosition);
+        Log.d(TAG, "loadClasses for " + SpinnerPosition +"  :" + currentVisiblePosition);
         mSpinner.setSelection(SpinnerPosition);
 
         if (SpinnerPosition == 0) {
@@ -251,7 +245,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.d(TAG, "fav");
         sortProgress.setVisibility(View.GONE);
         recyclerView.setAdapter(favMoviesAdapter);
-        //   recyclerView.scrollToPosition(currentVisiblePosition);
+        Log.d(TAG, "fav" + currentVisiblePosition);
+        recyclerView.scrollToPosition(currentVisiblePosition);
     }
 
     private void loadPopularMoviesList() {
@@ -271,8 +266,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     }
                 }));
-               /* Log.d(TAG, "Popular "+currentVisiblePosition);
-                recyclerView.scrollToPosition(currentVisiblePosition);*/
+                Log.d(TAG, "Popular "+currentVisiblePosition);
+                recyclerView.scrollToPosition(currentVisiblePosition);
 
 
             }
@@ -308,8 +303,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                     }
                 }));
-              /*  Log.d(TAG, "Top "+currentVisiblePosition);
-                recyclerView.scrollToPosition(currentVisiblePosition);*/
+                Log.d(TAG, "Top "+currentVisiblePosition);
+                recyclerView.scrollToPosition(currentVisiblePosition);
 
             }
 
