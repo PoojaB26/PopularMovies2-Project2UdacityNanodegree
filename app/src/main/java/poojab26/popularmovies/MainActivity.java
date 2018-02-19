@@ -68,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         sortProgress = (ProgressBar) findViewById(R.id.sortProgress);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mSpinner = (Spinner) findViewById(R.id.spinner_nav);
-
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -93,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 SharedPrefPositions, Context.MODE_PRIVATE);
 
         editor = sharedPref.edit();
+        //SpinnerPosition = sharedPref.getInt(Spinner_Position_String, 0);
+
+       // mSpinner.setSelection(SpinnerPosition);
 
 
     }
@@ -120,7 +122,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.d(TAG, "OnResume var: " + currentVisiblePosition);
 
         layoutManager = new GridLayoutManager(this, numberOfColumns);
+        int pScroll = sharedPref.getInt(Scroll_Position_String, 0);
+
         recyclerView.setLayoutManager(layoutManager);
+        recyclerView.scrollToPosition(pScroll);
+
         favMoviesAdapter = new FavMoviesAdapter(this, new FavMoviesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -155,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 editor.putInt(Scroll_Position_String, currentVisiblePosition);
                 editor.apply();
                 loadClasses();
+
                 /*Hack to avoid the duplicate call to OnItemSelected*/
                 count++;
                 Log.d(TAG, "count "+count);
@@ -191,6 +198,9 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        currentVisiblePosition = ((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
+
         outState.putInt(Spinner_Position_String, SpinnerPosition);
         outState.putInt(Scroll_Position_String, currentVisiblePosition);
         Log.d(TAG, "OnSave flag: " + flag + " var-> " + currentVisiblePosition);

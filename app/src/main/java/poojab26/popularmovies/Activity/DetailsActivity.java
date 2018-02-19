@@ -67,15 +67,6 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-        /*Toolbar myChildToolbar =
-                (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myChildToolbar);
-
-        // Get a support ActionBar corresponding to this toolbar
-        ActionBar ab = getSupportActionBar();
-
-        // Enable the Up button
-        ab.setDisplayHomeAsUpEnabled(true);*/
 
         tvMovieBackground = (ImageView)findViewById(R.id.imgBackground);
         tvMovieTitle = (TextView)findViewById(R.id.tvOrigTitle);
