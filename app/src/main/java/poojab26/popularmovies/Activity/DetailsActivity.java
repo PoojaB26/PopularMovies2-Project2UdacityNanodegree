@@ -6,15 +6,18 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -43,6 +46,9 @@ import static poojab26.popularmovies.Data.MoviesContract.MoviesEntry.CONTENT_URI
 import static poojab26.popularmovies.MainActivity.MOVIE_LOADER_ID;
 
 public class DetailsActivity extends AppCompatActivity {
+
+    private Toolbar mToolbar;
+
     TextView tvMovieTitle, tvSynopsis, tvRating, tvRelease;
     ImageView tvMovieBackground;
     Button favButton;
@@ -61,6 +67,15 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        /*Toolbar myChildToolbar =
+                (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myChildToolbar);
+
+        // Get a support ActionBar corresponding to this toolbar
+        ActionBar ab = getSupportActionBar();
+
+        // Enable the Up button
+        ab.setDisplayHomeAsUpEnabled(true);*/
 
         tvMovieBackground = (ImageView)findViewById(R.id.imgBackground);
         tvMovieTitle = (TextView)findViewById(R.id.tvOrigTitle);

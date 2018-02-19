@@ -153,14 +153,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 editor.putInt(Spinner_Position_String, SpinnerPosition);
                 editor.putInt(Scroll_Position_String, currentVisiblePosition);
-
-                Log.d(TAG, "OnItemSelected var: "+currentVisiblePosition);
                 editor.apply();
                 loadClasses();
+                /*Hack to avoid the duplicate call to OnItemSelected*/
                 count++;
                 Log.d(TAG, "count "+count);
                 if(count>1 && SpinnerPosition!=0) {
-                    flag = -1;
+                    flag=-1;
                     count=0;
                 }else if(SpinnerPosition==0)
                     flag =-1;
