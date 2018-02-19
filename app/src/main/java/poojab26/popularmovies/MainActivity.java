@@ -36,6 +36,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor> {
 
     int flag=-1;
+    static int count;
     int currentVisiblePosition;
     MoviesAdapter adapter;
     ApiInterface apiInterface;
@@ -99,49 +100,27 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(TAG, "onPause");
         flag=1;
         currentVisiblePosition = ((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
 
         editor.putInt(Spinner_Position_String, SpinnerPosition);
         editor.putInt(Scroll_Position_String, currentVisiblePosition);
-        Log.d(TAG, SpinnerPosition + "AND"+currentVisiblePosition);
+        Log.d(TAG, "onPause :"+currentVisiblePosition + "FLAG :"  + flag);
         editor.apply();
 
-       /* currentVisiblePosition = 0;
-
-        currentVisiblePosition = ((GridLayoutManager)recyclerView.getLayoutManager()).findFirstVisibleItemPosition();
-        Log.d(TAG, "OnPause "+currentVisiblePosition);*/
     }
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "OnResume & Bundle:" +savedInstance + " flag" + flag);
-
+        Log.d(TAG, "OnResume & Bundle:" +savedInstance + " flag " + flag);
         super.onResume();
-
-        //sharedPref = getSharedPreferences(SharedPrefPositions, MODE_PRIVATE);
 
         SpinnerPosition = sharedPref.getInt(Spinner_Position_String, 0);
         currentVisiblePosition = sharedPref.getInt(Scroll_Position_String, 0);
-        Log.d(TAG, SpinnerPosition + "AND NOW " + currentVisiblePosition);
+        Log.d(TAG, "OnResume var: " + currentVisiblePosition);
 
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
-       /* if(savedInstance!=null) {
-            currentVisiblePosition = savedInstance.getInt(Scroll_Position);
-        }*/
-       /* currentVisiblePosition = sharedPref.getInt(Scroll_Position, 0);
-        SpinnerPosition = sharedPref.getInt(Spinner_Position, 0);*/
-        //  mSpinner.setSelection(SpinnerPosition);
-
-        // Log.d(TAG, "on resume spinner " + SpinnerPosition);
-
-        /*loadClasses(SpinnerPosition);
-
-        (layoutManager).scrollToPosition(currentVisiblePosition);*/
-        // Log.d(TAG, "OnResume "+currentVisiblePosition);
-
         favMoviesAdapter = new FavMoviesAdapter(this, new FavMoviesAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(int position) {
@@ -154,19 +133,19 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
 
         mSpinner.setAdapter(menuArrayAadapter);
+         count=0;
         mSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
                 int sPosition = sharedPref.getInt(Spinner_Position_String, 0);
                 int pScroll = sharedPref.getInt(Scroll_Position_String, 0);
-                Log.d(TAG, pScroll+" scroll & var->" + currentVisiblePosition+ savedInstance);
-
+                Log.d(TAG, "OnItemSelected :" + pScroll+" shared & var->" + currentVisiblePosition);
                     SpinnerPosition = parent.getSelectedItemPosition();
 
-                Log.d(TAG, "flag " + flag);
+
+                Log.d(TAG, "onItemSelected flag" + flag);
                 if(flag==1) { //orientation change
                     SpinnerPosition = sPosition;
-                    flag = -1;
                     currentVisiblePosition = pScroll;
                 }else{
                     currentVisiblePosition = 0;
@@ -175,14 +154,16 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 editor.putInt(Spinner_Position_String, SpinnerPosition);
                 editor.putInt(Scroll_Position_String, currentVisiblePosition);
 
-                Log.d(TAG, currentVisiblePosition + " Scroll OnItemSelected");
+                Log.d(TAG, "OnItemSelected var: "+currentVisiblePosition);
                 editor.apply();
-
-               /* if(SpinnerPosition==-1)
-                    SpinnerPosition = parent.getSelectedItemPosition();*/
-
-
                 loadClasses();
+                count++;
+                Log.d(TAG, "count "+count);
+                if(count>1 && SpinnerPosition!=0) {
+                    flag = -1;
+                    count=0;
+                }else if(SpinnerPosition==0)
+                    flag =-1;
 
             } // to close the onItemSelected
 
@@ -198,7 +179,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        Log.d(TAG, "OnRestore");
+        Log.d(TAG, "OnRestore flag "+flag);
         if (savedInstanceState != null) {
             savedInstance = savedInstanceState;
             flag=1; //orientation changed
@@ -213,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         super.onSaveInstanceState(outState);
         outState.putInt(Spinner_Position_String, SpinnerPosition);
         outState.putInt(Scroll_Position_String, currentVisiblePosition);
-        Log.d(TAG, "OnSave flag:" + flag + " " + currentVisiblePosition + " Bundle "+ savedInstance);
+        Log.d(TAG, "OnSave flag: " + flag + " var-> " + currentVisiblePosition);
 
         editor.putInt(Spinner_Position_String, SpinnerPosition);
         editor.putInt(Scroll_Position_String, currentVisiblePosition);
@@ -223,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void loadClasses() {
         SpinnerPosition = sharedPref.getInt(Spinner_Position_String, 0);
-        Log.d(TAG, "loadClasses for " + SpinnerPosition +"  :" + currentVisiblePosition);
+        Log.d(TAG, "loadClasses for " + SpinnerPosition +"  var:" + currentVisiblePosition);
         mSpinner.setSelection(SpinnerPosition);
 
         if (SpinnerPosition == 0) {
@@ -242,15 +223,13 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void loadFavouriteMovies() {
-        Log.d(TAG, "fav");
         sortProgress.setVisibility(View.GONE);
         recyclerView.setAdapter(favMoviesAdapter);
-        Log.d(TAG, "fav" + currentVisiblePosition);
+        Log.d(TAG, "loadFavMovies " + currentVisiblePosition);
         recyclerView.scrollToPosition(currentVisiblePosition);
     }
 
     private void loadPopularMoviesList() {
-        Log.d(TAG, "popular call");
         apiInterface = APIClient.getClient().create(ApiInterface.class);
 
         Call<MoviesList> call = apiInterface.getPopularMovies(BuildConfig.API_KEY);
@@ -285,7 +264,6 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void loadTopRatedMoviesList() {
-        Log.d(TAG, "top rated call");
 
         apiInterface = APIClient.getClient().create(ApiInterface.class);
 
