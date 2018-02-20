@@ -22,6 +22,8 @@ import android.widget.Spinner;
 
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import poojab26.popularmovies.Adapter.FavMoviesAdapter;
 import poojab26.popularmovies.Adapter.MoviesAdapter;
 import poojab26.popularmovies.Data.MoviesContract;
@@ -40,8 +42,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     int currentVisiblePosition;
     MoviesAdapter adapter;
     ApiInterface apiInterface;
-    RecyclerView recyclerView;
-    ProgressBar sortProgress;
+
+    @BindView(R.id.rvMovies) RecyclerView recyclerView;
+    @BindView(R.id.sortProgress) ProgressBar sortProgress;
+    @BindView(R.id.toolbar) Toolbar mToolbar;
+    @BindView(R.id.spinner_nav) Spinner mSpinner;
+
     int SpinnerPosition;
     RecyclerView.LayoutManager layoutManager;
     // Spinner spinner;
@@ -50,9 +56,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     public static final int MOVIE_LOADER_ID = 0;
     private FavMoviesAdapter favMoviesAdapter;
-    private Toolbar mToolbar;
 
-    private Spinner mSpinner;
+
     int numberOfColumns = 2;
     String TAG = "TAG";
     Bundle savedInstance = null;
@@ -63,19 +68,12 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-
         setContentView(R.layout.activity_main);
-        sortProgress = (ProgressBar) findViewById(R.id.sortProgress);
-        mToolbar = (Toolbar) findViewById(R.id.toolbar);
-        mSpinner = (Spinner) findViewById(R.id.spinner_nav);
+        ButterKnife.bind(this);
         if (mToolbar != null) {
             setSupportActionBar(mToolbar);
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
-
-
-        recyclerView = (RecyclerView) findViewById(R.id.rvMovies);
-
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         recyclerView.setLayoutManager(layoutManager);
         favMoviesAdapter = new FavMoviesAdapter(this, new FavMoviesAdapter.OnItemClickListener() {
@@ -85,18 +83,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             }
         });
         getSupportLoaderManager().initLoader(MOVIE_LOADER_ID, null, this);
-
-
         Context context = getApplicationContext();
         sharedPref = context.getSharedPreferences(
                 SharedPrefPositions, Context.MODE_PRIVATE);
 
         editor = sharedPref.edit();
-        //SpinnerPosition = sharedPref.getInt(Spinner_Position_String, 0);
-
-       // mSpinner.setSelection(SpinnerPosition);
-
-
     }
 
     @Override
@@ -114,13 +105,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     @Override
     protected void onResume() {
-        Log.d(TAG, "OnResume & Bundle:" +savedInstance + " flag " + flag);
         super.onResume();
 
         SpinnerPosition = sharedPref.getInt(Spinner_Position_String, 0);
         currentVisiblePosition = sharedPref.getInt(Scroll_Position_String, 0);
-        Log.d(TAG, "OnResume var: " + currentVisiblePosition);
-
         layoutManager = new GridLayoutManager(this, numberOfColumns);
         int pScroll = sharedPref.getInt(Scroll_Position_String, 0);
 
@@ -145,11 +133,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
                 int sPosition = sharedPref.getInt(Spinner_Position_String, 0);
                 int pScroll = sharedPref.getInt(Scroll_Position_String, 0);
-                Log.d(TAG, "OnItemSelected :" + pScroll+" shared & var->" + currentVisiblePosition);
-                    SpinnerPosition = parent.getSelectedItemPosition();
+                SpinnerPosition = parent.getSelectedItemPosition();
 
-
-                Log.d(TAG, "onItemSelected flag" + flag);
                 if(flag==1) { //orientation change
                     SpinnerPosition = sPosition;
                     currentVisiblePosition = pScroll;

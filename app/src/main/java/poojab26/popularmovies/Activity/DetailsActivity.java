@@ -22,9 +22,13 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import poojab26.popularmovies.Adapter.ReviewsAdapter;
 import poojab26.popularmovies.Adapter.TrailersAdapter;
 import poojab26.popularmovies.ApiInterface;
@@ -47,16 +51,18 @@ import static poojab26.popularmovies.MainActivity.MOVIE_LOADER_ID;
 
 public class DetailsActivity extends AppCompatActivity {
 
-    private Toolbar mToolbar;
-
-    TextView tvMovieTitle, tvSynopsis, tvRating, tvRelease;
-    ImageView tvMovieBackground;
-    Button favButton;
     ApiInterface apiInterface;
     String BASE_PATH = "http://image.tmdb.org/t/p/w342/";
 
-    RecyclerView trailersRecyclerView, reviewsRecyclerView;
-    LinearLayout trailersLayout;
+    @BindView(R.id.tvOrigTitle) TextView tvMovieTitle;
+    @BindView(R.id.tvSynopsis) TextView tvSynopsis;
+    @BindView(R.id.tvRating) TextView tvRating;
+    @BindView(R.id.tvRelease) TextView tvRelease;
+    @BindView(R.id.imgBackground) ImageView tvMovieBackground;
+    @BindView(R.id.favouriteButton) Button favButton;
+    @BindView(R.id.rvTrailers) RecyclerView trailersRecyclerView;
+    @BindView(R.id.rvReviews) RecyclerView reviewsRecyclerView;
+    @BindView(R.id.layoutTrailers) LinearLayout trailersLayout;
     MoviesDbHelper moviesDbHelper;
     RecyclerView.LayoutManager trailersLayoutManager, reviewsLayoutManager;
 
@@ -67,21 +73,10 @@ public class DetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
-
-        tvMovieBackground = (ImageView)findViewById(R.id.imgBackground);
-        tvMovieTitle = (TextView)findViewById(R.id.tvOrigTitle);
-        tvSynopsis = (TextView)findViewById(R.id.tvSynopsis);
-        tvRating = (TextView)findViewById(R.id.tvRating);
-        tvRelease = (TextView)findViewById(R.id.tvRelease);
-        favButton = (Button)findViewById(R.id.favouriteButton);
+        ButterKnife.bind(this);
         moviesDbHelper = new MoviesDbHelper(this);
-
-        trailersLayout = (LinearLayout)findViewById(R.id.layoutTrailers);
-        trailersRecyclerView = (RecyclerView)findViewById(R.id.rvTrailers);
         trailersLayoutManager = new LinearLayoutManager(this);
         trailersRecyclerView.setLayoutManager(trailersLayoutManager);
-
-        reviewsRecyclerView = (RecyclerView)findViewById(R.id.rvReviews);
         reviewsLayoutManager = new LinearLayoutManager(this);
         reviewsRecyclerView.setLayoutManager(reviewsLayoutManager);
         intent = this.getIntent();
@@ -179,7 +174,6 @@ public class DetailsActivity extends AppCompatActivity {
             } else
                 Log.d("TAG", "uri null");
 
-//TODO refresh loader
         }else{
             String id = movie.getId().toString();
             Uri uri = MoviesContract.MoviesEntry.CONTENT_URI;
@@ -188,9 +182,6 @@ public class DetailsActivity extends AppCompatActivity {
             Log.d("TAG", returnUri+"");
             getContentResolver().notifyChange(uri, null);
             favButton.setBackgroundResource(R.drawable.favourite_false);
-//TODO refresh loader
-
-            //    getSupportLoaderManager().restartLoader(MOVIE_LOADER_ID, null, DetailsActivity.this);
         }
     }
 
